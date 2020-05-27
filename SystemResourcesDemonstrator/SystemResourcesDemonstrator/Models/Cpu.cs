@@ -10,10 +10,23 @@ namespace SystemResourcesDemonstrator.Models
 {
     public class Cpu
     {
-        [JsonPropertyName("total")]
-        public float TotalCpu { get; set; }
+        [JsonPropertyName("cores")]
+        public float Cores { get; set; }
 
-        [JsonPropertyName("inUse")]
-        public float CpuUsagePercent { get; set; }
+        [JsonPropertyName("utilization")]
+        public double CpuUsagePercent { get; set; }
+
+        [JsonPropertyName("currentSpeed")]
+        public double CpuCurrentSpeed { get; set; }
+
+        [JsonPropertyName("baseSpeed")]
+        public double CpuBasedSpeed { get; set; }
+
+        [JsonPropertyName("logicalProcessors")]
+        public float LogicalProcessors { get; set; }
+
+        [JsonPropertyName("physicalProcessors")]
+        public float PhysicalProcessors { get; set; }
+
     }
 }

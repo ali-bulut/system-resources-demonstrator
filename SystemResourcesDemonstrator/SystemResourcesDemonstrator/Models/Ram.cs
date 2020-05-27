@@ -12,10 +12,10 @@ namespace SystemResourcesDemonstrator.Models
     public class Ram
     {
         [JsonPropertyName("total")]
-        public float TotalRam { get; set; }
+        public double TotalRam { get; set; }
 
         [JsonPropertyName("inUse")]
-        public float RamUsage { get; set; }
+        public double RamUsage { get; set; }
         
     }
 }

@@ -24,8 +24,12 @@ namespace SystemResourcesDemonstrator
                 {
                     Disk disk = new Disk();
                     disk.DiskName = drive.Name;
-                    disk.DiskUsage = (drive.TotalSize - drive.AvailableFreeSpace) / 1000000000;
-                    disk.TotalDisk = drive.TotalSize / 1000000000;
+                    //in order to format the value like "12.34"
+                    double diskUsage = Math.Truncate((drive.TotalSize - drive.TotalFreeSpace) * (9.31 / 10000000000) * 100) / 100;
+                    disk.DiskUsage = diskUsage;
+
+                    double totalDisk = Math.Truncate(drive.TotalSize * (9.31 / 10000000000) * 100) / 100;
+                    disk.TotalDisk = totalDisk;
                     disks.Add(disk);
                 }
             }
@@ -46,8 +50,26 @@ namespace SystemResourcesDemonstrator
             var fakeCpuUsage = cpuCounter.NextValue();
             Thread.Sleep(1000);
 
-            cpu.CpuUsagePercent = cpuCounter.NextValue();
-            cpu.TotalCpu = (uint)(mo["MaxClockSpeed"]);
+            double usagePercent = Math.Truncate(cpuCounter.NextValue() * 100) / 100;
+            cpu.CpuUsagePercent = usagePercent;
+
+            foreach (var item in new ManagementObjectSearcher("Select * from Win32_Processor").Get())
+            {
+                cpu.Cores += int.Parse(item["NumberOfCores"].ToString());
+            }
+
+            cpu.CpuCurrentSpeed = (uint)(mo["CurrentClockSpeed"]);
+            cpu.CpuBasedSpeed = (uint) (mo["MaxClockSpeed"]);
+
+            foreach (var item in new System.Management.ManagementObjectSearcher("Select * from Win32_ComputerSystem").Get())
+            {
+                cpu.LogicalProcessors = int.Parse(item["NumberOfLogicalProcessors"].ToString());
+            }
+
+            foreach (var item in new System.Management.ManagementObjectSearcher("Select * from Win32_ComputerSystem").Get())
+            {
+                cpu.PhysicalProcessors = int.Parse(item["NumberOfProcessors"].ToString());
+            }
 
             return cpu;
         }
@@ -58,8 +80,12 @@ namespace SystemResourcesDemonstrator
             ComputerInfo computerInfo = new ComputerInfo();
             Ram ram = new Ram();
 
-            ram.RamUsage = ramCounter.NextValue();
-            ram.TotalRam = computerInfo.TotalPhysicalMemory / 1000000;
+            double ramUsage = Math.Truncate((computerInfo.TotalPhysicalMemory - computerInfo.AvailablePhysicalMemory) *
+                                            (9.31 / 10000000000) * 100) / 100;
+            ram.RamUsage = ramUsage;
+
+            double totalRam = Math.Truncate(computerInfo.TotalPhysicalMemory * (9.31 / 10000000000) * 100) / 100;
+            ram.TotalRam = totalRam;
 
             return ram;
         }
